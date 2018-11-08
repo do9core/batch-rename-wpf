@@ -32,9 +32,9 @@ but cannot redo because of some bugs.
 
 #### 未使用的思路：装饰器模式
 
-很好理解，首先需要使用一个公共基类（比如说`RenameOperation`类)  
+很好理解，首先需要使用一个公共基类（比如说`RenameCommand`类)  
 暴露一个公有方法(比如说`string Execute()`)，所有子类存储一个基类对象引用(相当于记录上次操作的结果)  
-先使用不执行任何更改的一个子类对文件名进行包装（比如`DoNothingOperation`类)
+先使用不执行任何更改的一个子类对文件名进行包装（比如`DoNothingCommand`类)
 然后每次追加修改，就额外进行一次包装
 最后调用最外层的共有方法即得到修改后的新串
 
@@ -47,7 +47,7 @@ but cannot redo because of some bugs.
 
 #### 最终的实现方案：操作栈
 
-也不是很困难，同样使用一个公共基类（`RenameOperation`）  
+也不是很困难，同样使用一个公共基类（`RenameCommand`）  
 然后使用一个操作栈记录这些操作
 
 这个栈并不是严格意义上的栈，允许对其进行从栈底到栈顶的遍历  
@@ -60,3 +60,5 @@ but cannot redo because of some bugs.
 即可取得需要的新文件名
 
 相比上面的方式，这种方式就解决了撤销和内存消耗的问题
+
+~~看了看代码又想了想，这™不就是命令模式吗，所以把Operation都改成了Command~~
