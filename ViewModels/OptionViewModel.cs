@@ -11,21 +11,21 @@ using do9Rename.Core;
 
 namespace do9Rename.ViewModels
 {
-    class OptionVM : NotificationObject
+    internal class OptionViewModel : NotificationObject
     {
-        public const string SUBSTRACT = "SUBSTRACT";     //截取功能
-        public const string APPEND = "APPEND";           //插入功能
-        public const string REPLACE = "REPLACE";         //替换功能
-        public const string NOTHING = "NOTHING";         //啥也不干
+        public const string Substract = "SUBSTRACT";     //截取功能
+        public const string Append = "APPEND";           //插入功能
+        public const string Replace = "REPLACE";         //替换功能
+        public const string Nothing = "NOTHING";         //啥也不干
 
         #region 私有变量
 
-        private static readonly char[] INVALID_CHARS = @"\/:*?""<>|".ToCharArray();
+        private static readonly char[] InvalidChars = @"\/:*?""<>|".ToCharArray();
 
-        private ObservableOrderStack<RenameOperation> _operations;
-        private ObservableOrderStack<RenameOperation> _undos;
-        private RemoveExtOperation _removeExt;
-        private AppendExtOperation _appendExt;
+        private readonly ObservableOrderStack<RenameCommand> _operations;
+        private readonly ObservableOrderStack<RenameCommand> _undos;
+        private readonly RemoveExtCommand _removeExt;
+        private readonly AppendExtCommand _appendExt;
 
         private string _msg;
         private int _selectedIndex;
@@ -75,12 +75,12 @@ namespace do9Rename.ViewModels
         /// <summary>
         /// 原文件名
         /// </summary>
-        public ObservableCollection<FileInfo> OldNames { get; private set; }
+        public ObservableCollection<FileInfo> OldNames { get; }
 
         /// <summary>
         /// 新文件名
         /// </summary>
-        public ObservableCollection<string> NewNames { get; private set; }
+        public ObservableCollection<string> NewNames { get; }
 
         //截取功能的参数
 
@@ -92,7 +92,7 @@ namespace do9Rename.ViewModels
             get => $"{_subSkip}";
             set
             {
-                if (!int.TryParse(value, out int temp))
+                if (!int.TryParse(value, out var temp))
                 {
                     Message = "不合法的输入";
                     return;
@@ -109,7 +109,7 @@ namespace do9Rename.ViewModels
             get => $"{_subTake}";
             set
             {
-                if (int.TryParse(value, out int temp))
+                if (int.TryParse(value, out var temp))
                 {
                     if (temp >= 0)
                     {
@@ -140,7 +140,7 @@ namespace do9Rename.ViewModels
             get => $"{_appendSkip}";
             set
             {
-                if (int.TryParse(value, out int temp))
+                if (int.TryParse(value, out var temp))
                 {
                     if (temp >= 0)
                     {
@@ -200,13 +200,13 @@ namespace do9Rename.ViewModels
 
         #endregion
 
-        public OptionVM()
+        public OptionViewModel()
         {
             // 初始化内部私有变量
-            _operations = new ObservableOrderStack<RenameOperation>();
-            _undos = new ObservableOrderStack<RenameOperation>();
-            _removeExt = Singleton<RemoveExtOperation>.Instance;
-            _appendExt = Singleton<AppendExtOperation>.Instance;
+            _operations = new ObservableOrderStack<RenameCommand>();
+            _undos = new ObservableOrderStack<RenameCommand>();
+            _removeExt = Singleton<RemoveExtCommand>.Instance;
+            _appendExt = Singleton<AppendExtCommand>.Instance;
 
             // 初始化Command对象
             AddOperationCommand = new RelayCommand<string>(AddOperation);
@@ -252,26 +252,26 @@ namespace do9Rename.ViewModels
         /// </summary>
         private void AddFiles()
         {
-            CommonOpenFileDialog cofd = new CommonOpenFileDialog
+            var dialog = new CommonOpenFileDialog
             {
                 Multiselect = true,
                 Title = "选择一个或多个文件"
             };
 
-            if (cofd.ShowDialog() != CommonFileDialogResult.Ok)
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
             {
                 Message = "没有选择文件";
                 return;
             }
 
-            int count = cofd.FileNames.Count();
-            foreach (var fname in cofd.FileNames)
+            var count = dialog.FileNames.Count();
+            foreach (var fName in dialog.FileNames)
             {
-                OldNames.Add(new FileInfo(fname));
+                OldNames.Add(new FileInfo(fName));
             }
 
             UpdateNewName();
-            Message = count > 1 ? $"已添加{count}个文件" : $"已添加文件{cofd.FileName}";
+            Message = count > 1 ? $"已添加{count}个文件" : $"已添加文件{dialog.FileName}";
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace do9Rename.ViewModels
         /// </summary>
         private void AddDirectory()
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog
+            var dialog = new CommonOpenFileDialog
             {
                 IsFolderPicker = true,
                 Title = "选择一个文件夹"
@@ -291,7 +291,7 @@ namespace do9Rename.ViewModels
                 return;
             }
 
-            DirectoryInfo dir = new DirectoryInfo(dialog.FileName);
+            var dir = new DirectoryInfo(dialog.FileName);
             if (!dir.Exists)
             {
                 Message = "目录不存在";
@@ -311,12 +311,12 @@ namespace do9Rename.ViewModels
         /// </summary>
         /// <param name="fInf">文件信息</param>
         /// <returns>新文件名</returns>
-        private string GetNewName(FileInfo fInf)
+        private string GetNewName(FileSystemInfo fInf)
         {
             _removeExt.Extension = fInf.Extension;
             _appendExt.Extension = fInf.Extension;
 
-            string result = WithExtension ? fInf.Name : _removeExt.Execute(fInf.Name);
+            var result = WithExtension ? fInf.Name : _removeExt.Execute(fInf.Name);
 
             foreach (var operation in _operations)
             {
@@ -343,7 +343,6 @@ namespace do9Rename.ViewModels
             catch (ArgumentException e)
             {
                 Message = e.Message;
-                return;
             }
         }
 
@@ -373,8 +372,8 @@ namespace do9Rename.ViewModels
         {
             switch (operation)
             {
-                case SUBSTRACT:
-                    var sub = new SubstractOperation
+                case Substract:
+                    var sub = new SubstractCommand
                     {
                         Skip = _subSkip,
                         Take = _subTake,
@@ -383,8 +382,8 @@ namespace do9Rename.ViewModels
                     _operations.Push(sub);
                     Message = $"追加操作 - {sub}";
                     break;
-                case APPEND:
-                    var append = new AppendOpreation
+                case Append:
+                    var append = new AppendCommand
                     {
                         Skip = _appendSkip,
                         AppendText = _appendText
@@ -392,8 +391,8 @@ namespace do9Rename.ViewModels
                     _operations.Push(append);
                     Message = $"追加操作 - {append}";
                     break;
-                case REPLACE:
-                    var replace = new ReplaceOpreation
+                case Replace:
+                    var replace = new ReplaceCommand
                     {
                         OldText = _replaceOld,
                         NewText = _replaceNew
@@ -401,8 +400,8 @@ namespace do9Rename.ViewModels
                     _operations.Push(replace);
                     Message = $"追加操作 - {replace}";
                     break;
-                case NOTHING:
-                    _operations.Push(new DoNothingOpreation());
+                case Nothing:
+                    _operations.Push(new DoNothingCommand());
                     break;
                 default:
                     throw new ArgumentException();
@@ -415,8 +414,8 @@ namespace do9Rename.ViewModels
         /// </summary>
         private void ExecuteRename()
         {
-            int error = 0;
-            for (int i = 0; i < OldNames.Count; ++i)
+            var error = 0;
+            for (var i = 0; i < OldNames.Count; ++i)
             {
                 if (!IsValidFileName(NewNames[i]))
                 {
@@ -424,7 +423,7 @@ namespace do9Rename.ViewModels
                     continue;
                 }
                 var dir = OldNames[i].Directory;
-                OldNames[i].MoveTo($"{dir.FullName}/{NewNames[i]}");
+                OldNames[i].MoveTo($"{dir?.FullName}/{NewNames[i]}");
             }
             RefreshOldName();
             UpdateNewName();
@@ -438,18 +437,11 @@ namespace do9Rename.ViewModels
         /// <summary>
         /// 检查文件名中是否有不合法字符
         /// </summary>
-        /// <param name="fname">文件名</param>
+        /// <param name="fName">文件名</param>
         /// <returns>是否合法</returns>
-        private static bool IsValidFileName(string fname)
+        private static bool IsValidFileName(string fName)
         {
-            for (int i = 0; i < INVALID_CHARS.Length; ++i)
-            {
-                if (fname.Contains(INVALID_CHARS[i]))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return InvalidChars.Any(fName.Contains);
         }
 
         /// <summary>
@@ -470,8 +462,8 @@ namespace do9Rename.ViewModels
         /// </summary>
         private void DeleteSelected()
         {
-            int tempIndex = SelectedIndex;
-            string tempName = OldNames[tempIndex].FullName;
+            var tempIndex = SelectedIndex;
+            var tempName = OldNames[tempIndex].FullName;
 
             OldNames.RemoveAt(SelectedIndex);
             NewNames.RemoveAt(tempIndex);
@@ -484,11 +476,11 @@ namespace do9Rename.ViewModels
         /// </summary>
         private void Undo()
         {
-            var lastOper = _operations.Pop();
-            _undos.Push(lastOper);
+            var lastOpe = _operations.Pop();
+            _undos.Push(lastOpe);
             UpdateNewName();
 
-            Message = $"已撤销操作 - {lastOper}";
+            Message = $"已撤销操作 - {lastOpe}";
         }
 
         /// <summary>
@@ -496,11 +488,11 @@ namespace do9Rename.ViewModels
         /// </summary>
         private void Redo()
         {
-            var lastOper = _undos.Pop();
-            _operations.Push(lastOper);
+            var ope = _undos.Pop();
+            _operations.Push(ope);
             UpdateNewName();
 
-            Message = $"已重做操作 - {lastOper}";
+            Message = $"已重做操作 - {ope}";
         }
     }
 }

@@ -61,16 +61,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Core\AppendExtOperation.cs" />
-    <Compile Include="Core\RemoveExtOperation.cs" />
+    <Compile Include="Core\AppendExtCommand.cs" />
+    <Compile Include="Core\RemoveExtCommand.cs" />
     <Compile Include="Helpers\NotificationObject.cs" />
-    <Compile Include="Core\AppendOpreation.cs" />
-    <Compile Include="Core\DoNothingOpreation.cs" />
-    <Compile Include="Core\RenameOperation.cs" />
-    <Compile Include="Core\ReplaceOpreation.cs" />
-    <Compile Include="Core\SubstractOperation.cs" />
+    <Compile Include="Core\AppendCommand.cs" />
+    <Compile Include="Core\DoNothingCommand.cs" />
+    <Compile Include="Core\RenameCommand.cs" />
+    <Compile Include="Core\ReplaceCommand.cs" />
+    <Compile Include="Core\SubstractCommand.cs" />
     <Compile Include="Helpers\ObservableOrderStack.cs" />
-    <Compile Include="ViewModels\OptionVM.cs" />
+    <Compile Include="ViewModels\OptionViewModel.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Page Include="Views\MainWindow.xaml">

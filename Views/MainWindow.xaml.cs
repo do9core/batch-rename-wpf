@@ -12,7 +12,7 @@ namespace do9Rename.Views
     {
         public MainWindow()
         {
-            this.DataContext = Singleton<OptionVM>.Instance;
+            DataContext = Singleton<OptionViewModel>.Instance;
             InitializeComponent();
         }
     }

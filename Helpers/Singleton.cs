@@ -5,9 +5,9 @@ namespace do9Rename.Helpers
 {
     internal static class Singleton<T> where T : new()
     {
-        private static ConcurrentDictionary<Type, T> _instances
-            = new ConcurrentDictionary<Type, T>();
+        private static ConcurrentDictionary<Type, T> Instances
+            => new ConcurrentDictionary<Type, T>();
 
-        public static T Instance { get => _instances.GetOrAdd(typeof(T), new T()); }
+        public static T Instance => Instances.GetOrAdd(typeof(T), new T());
     }
 }

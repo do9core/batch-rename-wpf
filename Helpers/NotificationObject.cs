@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace do9Rename.Helpers
 {
-    class NotificationObject
+    internal class NotificationObject
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,6 +18,7 @@ namespace do9Rename.Helpers
             OnPropertyChanged(propertyName);
         }
 
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName) 
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:do9Rename.Views"
+        xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
+        xmlns:viewModels="clr-namespace:do9Rename.ViewModels"
         mc:Ignorable="d"
-        Title="批量重命名" Height="500" Width="850">
+        Title="批量重命名" Height="500" Width="850" d:DataContext="{d:DesignInstance viewModels:OptionViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,7 +21,6 @@
                 <MenuItem Header="添加文件" Command="{Binding Path=AddFileCommand}"/>
             </MenuItem>
             <MenuItem Header="操作">
-                
                 <MenuItem Header="撤销" Command="{Binding Path=UndoCommand}"/>
                 <MenuItem Header="重做" Command="{Binding Path=RedoCommand}"/>
                 <MenuItem IsCheckable="True" Header="影响扩展名"
@@ -131,10 +131,11 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" Text="原文件名：" Margin="5,0,0,0"/>
-            <TextBlock Grid.Column="1" Text="新文件名：" Margin="5,0,0,0"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="新文件名：" Margin="5,0,0,0"/>
 
             <ListView
-                Grid.Row="1"
+                Grid.Row="1" 
+                Grid.Column="0"
                 Margin="5"
                 SelectedIndex="{Binding Path=SelectedIndex}"
                 ItemsSource="{Binding Path=OldNames}">
@@ -155,7 +156,7 @@
                     </ContextMenu>
                 </ListView.ContextMenu>
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="io:FileInfo">
                         <Border BorderThickness="0,0,0,1"
                                 BorderBrush="Black"
                                 Margin="0"

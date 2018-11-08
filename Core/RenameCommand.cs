@@ -1,6 +1,6 @@
 ﻿namespace do9Rename.Core
 {
-    abstract class RenameOperation
+    internal abstract class RenameCommand
     {
         public abstract string Execute(string input);
     }

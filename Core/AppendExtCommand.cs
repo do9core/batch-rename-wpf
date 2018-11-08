@@ -1,6 +1,6 @@
 ﻿namespace do9Rename.Core
 {
-    class AppendExtOperation : RenameOperation
+    internal class AppendExtCommand : RenameCommand
     {
         public string Extension { get; set; }
 

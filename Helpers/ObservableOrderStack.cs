@@ -7,15 +7,15 @@ namespace do9Rename.Helpers
     {
         public T Pop()
         {
-            T last = this.Last();
-            this.Remove(last);
+            var last = this.Last();
+            Remove(last);
             OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
             return last;
         }
 
         public void Push(T item)
         {
-            this.Add(item);
+            Add(item);
             OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
         }
     }
