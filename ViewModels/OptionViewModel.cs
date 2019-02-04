@@ -57,7 +57,7 @@ namespace do9Rename.ViewModels
         /// <summary>
         /// 界面显示的消息
         /// </summary>
-        public string Message
+        public string MessageText
         {
             get => _msg;
             set => Set(ref _msg, value);
@@ -94,7 +94,7 @@ namespace do9Rename.ViewModels
             {
                 if (!int.TryParse(value, out var temp))
                 {
-                    Message = "不合法的输入";
+                    MessageText = "不合法的输入";
                     return;
                 }
                 Set(ref _subSkip, temp);
@@ -117,7 +117,7 @@ namespace do9Rename.ViewModels
                         return;
                     }
                 }
-                Message = "不合法输入";
+                MessageText = "不合法输入";
             }
         }
 
@@ -148,7 +148,7 @@ namespace do9Rename.ViewModels
                         return;
                     }
                 }
-                Message = "不合法的输入";
+                MessageText = "不合法的输入";
             }
         }
 
@@ -186,7 +186,7 @@ namespace do9Rename.ViewModels
         #region 界面绑定命令
 
         public ICommand AddOperationCommand { get; set; }
-        public ICommand ExecuteCommand { get; set; }
+        public ICommand ExecuteRenameCommand { get; set; }
         public ICommand RefreshCommand { get; set; }
         public ICommand ClearCommand { get; set; }
         public ICommand DeleteOneCommand { get; set; }
@@ -210,8 +210,8 @@ namespace do9Rename.ViewModels
 
             // 初始化Command对象
             AddOperationCommand = new RelayCommand<string>(AddOperation);
-            ExecuteCommand = new RelayCommand(ExecuteRename);
-            RefreshCommand = new RelayCommand(RefreshOldName);
+            ExecuteRenameCommand = new RelayCommand(ExecuteRename);
+            RefreshCommand = new RelayCommand(UpdateOldName);
             ClearCommand = new RelayCommand(ClearAll);
             SelectFolderCommand = new RelayCommand(AddDirectory);
             AddFileCommand = new RelayCommand(AddFiles);
@@ -244,7 +244,7 @@ namespace do9Rename.ViewModels
             ReplaceNew = "b";
 
             // 完毕
-            Message = "就绪";
+            MessageText = "就绪";
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace do9Rename.ViewModels
 
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
             {
-                Message = "没有选择文件";
+                MessageText = "没有选择文件";
                 return;
             }
 
@@ -271,7 +271,7 @@ namespace do9Rename.ViewModels
             }
 
             UpdateNewName();
-            Message = count > 1 ? $"已添加{count}个文件" : $"已添加文件{dialog.FileName}";
+            MessageText = count > 1 ? $"已添加{count}个文件" : $"已添加文件{dialog.FileName}";
         }
 
         /// <summary>
@@ -287,14 +287,14 @@ namespace do9Rename.ViewModels
 
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
             {
-                Message = "没有加载目录";
+                MessageText = "没有加载目录";
                 return;
             }
 
             var dir = new DirectoryInfo(dialog.FileName);
             if (!dir.Exists)
             {
-                Message = "目录不存在";
+                MessageText = "目录不存在";
                 return;
             }
 
@@ -303,7 +303,7 @@ namespace do9Rename.ViewModels
                 OldNames.Add(fInf);
             }
             UpdateNewName();
-            Message = $"已添加目录{dir.FullName}";
+            MessageText = $"已添加目录{dir.FullName}";
         }
 
         /// <summary>
@@ -342,14 +342,14 @@ namespace do9Rename.ViewModels
             }
             catch (ArgumentException e)
             {
-                Message = e.Message;
+                MessageText = e.Message;
             }
         }
 
         /// <summary>
         /// 刷新文件列表的旧文件名
         /// </summary>
-        private void RefreshOldName()
+        private void UpdateOldName()
         {
             var tempList = OldNames.ToList();
             OldNames.Clear();
@@ -361,7 +361,7 @@ namespace do9Rename.ViewModels
             }
 
             UpdateNewName();
-            Message = "刷新完毕";
+            MessageText = "刷新完毕";
         }
 
         /// <summary>
@@ -380,7 +380,7 @@ namespace do9Rename.ViewModels
                         HeadFirst = _subHeadFirst
                     };
                     _operations.Push(sub);
-                    Message = $"追加操作 - {sub}";
+                    MessageText = $"追加操作 - {sub}";
                     break;
                 case Append:
                     var append = new AppendCommand
@@ -389,7 +389,7 @@ namespace do9Rename.ViewModels
                         AppendText = _appendText
                     };
                     _operations.Push(append);
-                    Message = $"追加操作 - {append}";
+                    MessageText = $"追加操作 - {append}";
                     break;
                 case Replace:
                     var replace = new ReplaceCommand
@@ -398,7 +398,7 @@ namespace do9Rename.ViewModels
                         NewText = _replaceNew
                     };
                     _operations.Push(replace);
-                    Message = $"追加操作 - {replace}";
+                    MessageText = $"追加操作 - {replace}";
                     break;
                 case Nothing:
                     _operations.Push(new DoNothingCommand());
@@ -425,13 +425,13 @@ namespace do9Rename.ViewModels
                 var dir = OldNames[i].Directory;
                 OldNames[i].MoveTo($"{dir?.FullName}/{NewNames[i]}");
             }
-            RefreshOldName();
+            UpdateOldName();
             UpdateNewName();
 
             _operations.Clear();
             _undos.Clear();
 
-            Message = error > 0 ? $"{error}个文件重命名失败，已跳过" : "重命名成功完成";
+            MessageText = error > 0 ? $"{error}个文件重命名失败，已跳过" : "重命名成功完成";
         }
 
         /// <summary>
@@ -441,7 +441,7 @@ namespace do9Rename.ViewModels
         /// <returns>是否合法</returns>
         private static bool IsValidFileName(string fName)
         {
-            return InvalidChars.Any(fName.Contains);
+            return !InvalidChars.Any(fName.Contains);
         }
 
         /// <summary>
@@ -454,7 +454,7 @@ namespace do9Rename.ViewModels
             _operations.Clear();
             _undos.Clear();
 
-            Message = "成功清除列表";
+            MessageText = "成功清除列表";
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace do9Rename.ViewModels
             OldNames.RemoveAt(SelectedIndex);
             NewNames.RemoveAt(tempIndex);
 
-            Message = $"已移除{tempName}";
+            MessageText = $"已移除{tempName}";
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace do9Rename.ViewModels
             _undos.Push(lastOpe);
             UpdateNewName();
 
-            Message = $"已撤销操作 - {lastOpe}";
+            MessageText = $"已撤销操作 - {lastOpe}";
         }
 
         /// <summary>
@@ -492,7 +492,7 @@ namespace do9Rename.ViewModels
             _operations.Push(ope);
             UpdateNewName();
 
-            Message = $"已重做操作 - {ope}";
+            MessageText = $"已重做操作 - {ope}";
         }
     }
 }

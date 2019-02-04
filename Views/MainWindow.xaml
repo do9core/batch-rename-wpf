@@ -26,7 +26,7 @@
                 <MenuItem IsCheckable="True" Header="影响扩展名"
                           IsChecked="{Binding Path=WithExtension}" Command="{Binding Path=CheckExtCommand}"/>
                 <MenuItem Header="撤销全部操作" Command="{Binding Path=ClearOperationCommand}"/>
-                <MenuItem Header="执行全部" Command="{Binding Path=ExecuteCommand}"/>
+                <MenuItem Header="执行全部" Command="{Binding Path=ExecuteRenameCommand}"/>
             </MenuItem>
             <MenuItem Header="关于">
                 <MenuItem Header="Bug反馈" Command="{Binding Path=ReferenceCommand}"/>
@@ -200,8 +200,8 @@
             <TextBlock Margin="10,0,0,5"
                        Text="消息："/>
             <TextBlock Grid.Column="1" 
-                       Margin="0,0,0,5" 
-                       Text="{Binding Path=Message}"/>
+                     Margin="0,0,10,5"
+                     Text="{Binding Path=MessageText,UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
     </Grid>
 </Window>
