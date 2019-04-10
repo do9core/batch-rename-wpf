@@ -1,10 +1,10 @@
 ﻿namespace do9Rename.Core
 {
-    internal class RemoveExtCommand : RenameCommand
+    internal class RemoveExtCommand : IRemoveExtCommand
     {
         public string Extension { get; set; }
 
-        public override string Execute(string input)
+        public string Execute(string input)
         {
             return !input.EndsWith(Extension) ? 
                 input : 

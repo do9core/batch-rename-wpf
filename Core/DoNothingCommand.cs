@@ -1,8 +1,8 @@
 ﻿namespace do9Rename.Core
 {
-    internal class DoNothingCommand : RenameCommand
+    internal class DoNothingCommand : IRenameCommand
     {
-        public override string Execute(string input)
+        public string Execute(string input)
         {
             return input;
         }

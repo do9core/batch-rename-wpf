@@ -2,13 +2,13 @@
 
 namespace do9Rename.Core
 {
-    internal class SubstractCommand : RenameCommand
+    internal class SubstractCommand : IRenameCommand
     {
         public int Skip { get; set; }
         public int Take { get; set; }
         public bool HeadFirst { get; set; }
 
-        public override string Execute(string input)
+        public string Execute(string input)
         {
             return HeadFirst ?
                 new string(input

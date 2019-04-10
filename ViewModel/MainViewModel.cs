@@ -1,4 +1,10 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using do9Rename.Core;
+
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
+using Microsoft.WindowsAPICodePack.Dialogs;
+
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,12 +12,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-using do9Rename.Helpers;
-using do9Rename.Core;
-
-namespace do9Rename.ViewModels
+namespace do9Rename.ViewModel
 {
-    internal class OptionViewModel : NotificationObject
+    public class MainViewModel : ViewModelBase
     {
         public const string Substract = "SUBSTRACT";     //截取功能
         public const string Append = "APPEND";           //插入功能
@@ -22,10 +25,10 @@ namespace do9Rename.ViewModels
 
         private static readonly char[] InvalidChars = @"\/:*?""<>|".ToCharArray();
 
-        private readonly ObservableOrderStack<RenameCommand> _operations;
-        private readonly ObservableOrderStack<RenameCommand> _undos;
-        private readonly RemoveExtCommand _removeExt;
-        private readonly AppendExtCommand _appendExt;
+        private readonly ObservableOrderStack<IRenameCommand> _operations;
+        private readonly ObservableOrderStack<IRenameCommand> _undos;
+        private readonly IRemoveExtCommand _removeExt;
+        private readonly IAppendExtCommand _appendExt;
 
         private string _msg;
         private int _selectedIndex;
@@ -200,28 +203,17 @@ namespace do9Rename.ViewModels
 
         #endregion
 
-        public OptionViewModel()
+        public MainViewModel(IRemoveExtCommand removeExtCommand, IAppendExtCommand appendExtCommand)
         {
             // 初始化内部私有变量
-            _operations = new ObservableOrderStack<RenameCommand>();
-            _undos = new ObservableOrderStack<RenameCommand>();
-            _removeExt = Singleton<RemoveExtCommand>.Instance;
-            _appendExt = Singleton<AppendExtCommand>.Instance;
+            _operations = new ObservableOrderStack<IRenameCommand>();
+            _undos = new ObservableOrderStack<IRenameCommand>();
+            _removeExt = removeExtCommand;
+            _appendExt = appendExtCommand;
 
             // 初始化Command对象
-            AddOperationCommand = new RelayCommand<string>(AddOperation);
-            ExecuteRenameCommand = new RelayCommand(ExecuteRename);
-            RefreshCommand = new RelayCommand(UpdateOldName);
-            ClearCommand = new RelayCommand(ClearAll);
-            SelectFolderCommand = new RelayCommand(AddDirectory);
-            AddFileCommand = new RelayCommand(AddFiles);
-            CheckExtCommand = new RelayCommand(UpdateNewName);
-            ClearOperationCommand = new RelayCommand(() => { _operations.Clear(); _undos.Clear(); UpdateNewName(); });
-            ReferenceCommand = new RelayCommand(() => MessageBox.Show("请将问题原因发送到邮箱：do9core@outlook.com", "提示"));
-            DeleteOneCommand = new RelayCommand(DeleteSelected, () => SelectedIndex >= 0);
-            UndoCommand = new RelayCommand(Undo, () => _operations.Count > 0);
-            RedoCommand = new RelayCommand(Redo, () => _undos.Count > 0);
-
+            RegisterCommands();
+           
             // 初始化绑定属性
 
             // 全局属性
@@ -245,6 +237,25 @@ namespace do9Rename.ViewModels
 
             // 完毕
             MessageText = "就绪";
+        }
+
+        /// <summary>
+        /// 注册命令
+        /// </summary>
+        private void RegisterCommands()
+        {
+            AddOperationCommand = new RelayCommand<string>(AddOperation);
+            ExecuteRenameCommand = new RelayCommand(ExecuteRename);
+            RefreshCommand = new RelayCommand(UpdateOldName);
+            ClearCommand = new RelayCommand(ClearAll);
+            SelectFolderCommand = new RelayCommand(AddDirectory);
+            AddFileCommand = new RelayCommand(AddFiles);
+            CheckExtCommand = new RelayCommand(UpdateNewName);
+            ClearOperationCommand = new RelayCommand(() => { _operations.Clear(); _undos.Clear(); UpdateNewName(); });
+            ReferenceCommand = new RelayCommand(() => MessageBox.Show("请将问题原因发送到邮箱：do9core@outlook.com", "提示"));
+            DeleteOneCommand = new RelayCommand(DeleteSelected, () => SelectedIndex >= 0);
+            UndoCommand = new RelayCommand(Undo, () => _operations.Count > 0);
+            RedoCommand = new RelayCommand(Redo, () => _undos.Count > 0);
         }
 
         /// <summary>

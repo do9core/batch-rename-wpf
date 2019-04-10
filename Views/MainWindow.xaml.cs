@@ -1,8 +1,5 @@
 ﻿using System.Windows;
 
-using do9Rename.Helpers;
-using do9Rename.ViewModels;
-
 namespace do9Rename.Views
 {
     /// <summary>
@@ -12,7 +9,6 @@ namespace do9Rename.Views
     {
         public MainWindow()
         {
-            DataContext = Singleton<OptionViewModel>.Instance;
             InitializeComponent();
         }
     }
