@@ -6,5 +6,10 @@
         {
             return input;
         }
+
+        public override string ToString()
+        {
+            return "无操作";
+        }
     }
 }

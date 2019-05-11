@@ -22,5 +22,10 @@ namespace do9Rename.Core
                             .Reverse()
                             .ToArray());
         }
+
+        public override string ToString()
+        {
+            return "从" + (HeadFirst ? "头" : "尾") + $"截取第{Skip}到第{Take}位字符";
+        }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using do9Rename.Utils;
 using System.Windows;
 
 namespace do9Rename
@@ -13,5 +8,11 @@ namespace do9Rename
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+#if DEBUG
+            this.Startup += (s, e) => Singleton<ConsoleManager>.Instance.OpenConsole();
+#endif
+        }
     }
 }

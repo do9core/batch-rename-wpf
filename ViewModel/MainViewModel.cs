@@ -1,7 +1,6 @@
 using do9Rename.Core;
-
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -33,6 +32,7 @@ namespace do9Rename.ViewModel
         private string _msg;
         private int _selectedIndex;
         private bool _withExt;
+        private bool _isUsingRegex;
 
         private int _subSkip;
         private int _subTake;
@@ -55,6 +55,15 @@ namespace do9Rename.ViewModel
         {
             get => _withExt;
             set => Set(ref _withExt, value);
+        }
+
+        /// <summary>
+        /// 是否在替换时使用正则
+        /// </summary>
+        public bool IsUsingRegex
+        {
+            get => _isUsingRegex;
+            set => Set(ref _isUsingRegex, value);
         }
 
         /// <summary>
@@ -213,7 +222,7 @@ namespace do9Rename.ViewModel
 
             // 初始化Command对象
             RegisterCommands();
-           
+
             // 初始化绑定属性
 
             // 全局属性
@@ -221,6 +230,11 @@ namespace do9Rename.ViewModel
             NewNames = new ObservableCollection<string>();
             SelectedIndex = -1;
             WithExtension = true;
+
+            OldNames.CollectionChanged += (s, e) =>
+            {
+                UpdateNewName();
+            };
 
             // 截取功能属性
             SubSkip = "0";
@@ -237,6 +251,9 @@ namespace do9Rename.ViewModel
 
             // 完毕
             MessageText = "就绪";
+#if DEBUG
+            Console.WriteLine("Init success.");
+#endif
         }
 
         /// <summary>
@@ -281,7 +298,6 @@ namespace do9Rename.ViewModel
                 OldNames.Add(new FileInfo(fName));
             }
 
-            UpdateNewName();
             MessageText = count > 1 ? $"已添加{count}个文件" : $"已添加文件{dialog.FileName}";
         }
 
@@ -313,7 +329,7 @@ namespace do9Rename.ViewModel
             {
                 OldNames.Add(fInf);
             }
-            UpdateNewName();
+
             MessageText = $"已添加目录{dir.FullName}";
         }
 
@@ -370,8 +386,6 @@ namespace do9Rename.ViewModel
                 fInf.Refresh();
                 OldNames.Add(fInf);
             }
-
-            UpdateNewName();
             MessageText = "刷新完毕";
         }
 
@@ -406,7 +420,8 @@ namespace do9Rename.ViewModel
                     var replace = new ReplaceCommand
                     {
                         OldText = _replaceOld,
-                        NewText = _replaceNew
+                        NewText = _replaceNew,
+                        IsUsingRegex = _isUsingRegex
                     };
                     _operations.Push(replace);
                     MessageText = $"追加操作 - {replace}";

@@ -9,14 +9,12 @@ namespace do9Rename.Core
         {
             var last = this.Last();
             Remove(last);
-            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
             return last;
         }
 
         public void Push(T item)
         {
-            Add(item);
-            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
+            this.Add(item);
         }
     }
 }
