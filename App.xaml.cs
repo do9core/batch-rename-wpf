@@ -1,4 +1,6 @@
-﻿using do9Rename.Utils;
+﻿#if DEBUG
+using do9Rename.Utils;
+#endif
 using System.Windows;
 
 namespace do9Rename
@@ -11,7 +13,7 @@ namespace do9Rename
         public App()
         {
 #if DEBUG
-            this.Startup += (s, e) => Singleton<ConsoleManager>.Instance.OpenConsole();
+            this.Startup += (s, e) => new ConsoleManager().OpenConsole();
 #endif
         }
     }

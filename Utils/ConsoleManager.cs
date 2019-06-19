@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿#if DEBUG
+using System.Runtime.InteropServices;
 
 namespace do9Rename.Utils
 {
@@ -21,3 +22,4 @@ namespace do9Rename.Utils
         }
     }
 }
+#endif

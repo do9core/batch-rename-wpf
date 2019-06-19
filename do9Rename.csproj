@@ -80,8 +80,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\AppendExtCommand.cs" />
-    <Compile Include="Core\IAppendExtCommand.cs" />
-    <Compile Include="Core\IRemoveExtCommand.cs" />
+    <Compile Include="Core\IModifyExtCommand.cs" />
     <Compile Include="Core\IRenameCommand.cs" />
     <Compile Include="Core\RemoveExtCommand.cs" />
     <Compile Include="Core\AppendCommand.cs" />
@@ -98,7 +97,6 @@
     </Compile>
     <Compile Include="Core\ObservableOrderStack.cs" />
     <Compile Include="Utils\ConsoleManager.cs" />
-    <Compile Include="Utils\Singleton.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -133,9 +131,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Assets\HelpIcon.png" />
   </ItemGroup>
