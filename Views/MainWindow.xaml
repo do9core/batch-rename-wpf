@@ -67,11 +67,11 @@
                                 Grid.ColumnSpan="2"
                                 VerticalAlignment="Center">
                         <TextBlock Text="方向："/>
-                        <RadioButton GroupName="Direction"
+                        <RadioButton GroupName="SubStractDirection"
                                      Content="从前方开始"
                                      Margin="0,0,10,0"
                                      IsChecked="{Binding Path=SubHeadFirst,Mode=TwoWay}"/>
-                        <RadioButton GroupName="Direction"
+                        <RadioButton GroupName="SubStractDirection"
                              Content="从后方开始"/>
                     </StackPanel>
                     <TextBlock Text="从位置" VerticalAlignment="Center" Grid.Row="1"/>
@@ -116,11 +116,11 @@
                                 Grid.ColumnSpan="2"
                                 VerticalAlignment="Center">
                         <TextBlock Text="方向："/>
-                        <RadioButton GroupName="Direction"
+                        <RadioButton GroupName="InsertDirection"
                                      Content="从前方开始"
                                      Margin="0,0,10,0"
                                      IsChecked="{Binding Path=AppendHeadFirst,Mode=TwoWay}"/>
-                        <RadioButton GroupName="Direction"
+                        <RadioButton GroupName="InsertDirection"
                              Content="从后方开始"/>
                     </StackPanel>
                     <TextBlock VerticalAlignment="Center" Text="从位置" Grid.Row="1"/>
