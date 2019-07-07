@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿#if DEBUG
+using do9Rename.Utils;
+#endif
 using System.Windows;
 
 namespace do9Rename
@@ -13,5 +10,11 @@ namespace do9Rename
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+#if DEBUG
+            this.Startup += (s, e) => new ConsoleManager().OpenConsole();
+#endif
+        }
     }
 }

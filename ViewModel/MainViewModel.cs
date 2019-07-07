@@ -1,7 +1,7 @@
 using do9Rename.Core;
 
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -27,12 +27,13 @@ namespace do9Rename.ViewModel
 
         private readonly ObservableOrderStack<IRenameCommand> _operations;
         private readonly ObservableOrderStack<IRenameCommand> _undos;
-        private readonly IRemoveExtCommand _removeExt;
-        private readonly IAppendExtCommand _appendExt;
+        private readonly IModifyExtCommand _removeExt;
+        private readonly IModifyExtCommand _appendExt;
 
         private string _msg;
         private int _selectedIndex;
         private bool _withExt;
+        private bool _isUsingRegex;
 
         private int _subSkip;
         private int _subTake;
@@ -40,6 +41,7 @@ namespace do9Rename.ViewModel
 
         private int _appendSkip;
         private string _appendText;
+        private bool _appendHeadFirst;
 
         private string _replaceOld;
         private string _replaceNew;
@@ -55,6 +57,15 @@ namespace do9Rename.ViewModel
         {
             get => _withExt;
             set => Set(ref _withExt, value);
+        }
+
+        /// <summary>
+        /// 是否在替换时使用正则
+        /// </summary>
+        public bool IsUsingRegex
+        {
+            get => _isUsingRegex;
+            set => Set(ref _isUsingRegex, value);
         }
 
         /// <summary>
@@ -164,6 +175,15 @@ namespace do9Rename.ViewModel
             set => Set(ref _appendText, value);
         }
 
+        /// <summary>
+        /// 插入方向
+        /// </summary>
+        public bool AppendHeadFirst
+        {
+            get => _appendHeadFirst;
+            set => Set(ref _appendHeadFirst, value);
+        }
+
         //替换功能参数
 
         /// <summary>
@@ -203,17 +223,17 @@ namespace do9Rename.ViewModel
 
         #endregion
 
-        public MainViewModel(IRemoveExtCommand removeExtCommand, IAppendExtCommand appendExtCommand)
+        public MainViewModel()
         {
             // 初始化内部私有变量
             _operations = new ObservableOrderStack<IRenameCommand>();
             _undos = new ObservableOrderStack<IRenameCommand>();
-            _removeExt = removeExtCommand;
-            _appendExt = appendExtCommand;
+            _removeExt = new AppendExtCommand();
+            _appendExt = new RemoveExtCommand();
 
             // 初始化Command对象
             RegisterCommands();
-           
+
             // 初始化绑定属性
 
             // 全局属性
@@ -221,6 +241,8 @@ namespace do9Rename.ViewModel
             NewNames = new ObservableCollection<string>();
             SelectedIndex = -1;
             WithExtension = true;
+
+            OldNames.CollectionChanged += (s, e) => UpdateNewName();
 
             // 截取功能属性
             SubSkip = "0";
@@ -230,6 +252,7 @@ namespace do9Rename.ViewModel
             // 插入功能属性
             AppendSkip = "0";
             AppendText = "";
+            AppendHeadFirst = true;
 
             // 替换功能属性
             ReplaceOld = "a";
@@ -237,6 +260,9 @@ namespace do9Rename.ViewModel
 
             // 完毕
             MessageText = "就绪";
+#if DEBUG
+            Console.WriteLine("Init success.");
+#endif
         }
 
         /// <summary>
@@ -275,13 +301,18 @@ namespace do9Rename.ViewModel
                 return;
             }
 
+#if DEBUG
+            Console.WriteLine("Added files:");
+#endif
             var count = dialog.FileNames.Count();
             foreach (var fName in dialog.FileNames)
             {
+#if DEBUG
+                Console.WriteLine(fName);
+#endif
                 OldNames.Add(new FileInfo(fName));
             }
 
-            UpdateNewName();
             MessageText = count > 1 ? $"已添加{count}个文件" : $"已添加文件{dialog.FileName}";
         }
 
@@ -309,11 +340,15 @@ namespace do9Rename.ViewModel
                 return;
             }
 
+#if DEBUG
+            Console.WriteLine("Add dir: {0}", dir.FullName);
+#endif
+
             foreach (var fInf in dir.GetFiles())
             {
                 OldNames.Add(fInf);
             }
-            UpdateNewName();
+
             MessageText = $"已添加目录{dir.FullName}";
         }
 
@@ -370,8 +405,6 @@ namespace do9Rename.ViewModel
                 fInf.Refresh();
                 OldNames.Add(fInf);
             }
-
-            UpdateNewName();
             MessageText = "刷新完毕";
         }
 
@@ -384,30 +417,17 @@ namespace do9Rename.ViewModel
             switch (operation)
             {
                 case Substract:
-                    var sub = new SubstractCommand
-                    {
-                        Skip = _subSkip,
-                        Take = _subTake,
-                        HeadFirst = _subHeadFirst
-                    };
+                    var sub = new SubstractCommand(_subSkip, _subTake, _subHeadFirst);
                     _operations.Push(sub);
                     MessageText = $"追加操作 - {sub}";
                     break;
                 case Append:
-                    var append = new AppendCommand
-                    {
-                        Skip = _appendSkip,
-                        AppendText = _appendText
-                    };
+                    var append = new AppendCommand(_appendSkip, _appendText, _appendHeadFirst);
                     _operations.Push(append);
                     MessageText = $"追加操作 - {append}";
                     break;
                 case Replace:
-                    var replace = new ReplaceCommand
-                    {
-                        OldText = _replaceOld,
-                        NewText = _replaceNew
-                    };
+                    var replace = new ReplaceCommand(_replaceOld, _replaceNew, _isUsingRegex);
                     _operations.Push(replace);
                     MessageText = $"追加操作 - {replace}";
                     break;

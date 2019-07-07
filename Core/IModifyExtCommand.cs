@@ -1,6 +1,6 @@
 ﻿namespace do9Rename.Core
 {
-    public interface IRemoveExtCommand : IRenameCommand
+    public interface IModifyExtCommand : IRenameCommand
     {
         string Extension { get; set; }
     }

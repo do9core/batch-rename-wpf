@@ -1,7 +1,5 @@
 using CommonServiceLocator;
 
-using do9Rename.Core;
-
 using GalaSoft.MvvmLight.Ioc;
 
 namespace do9Rename.ViewModel
@@ -12,8 +10,6 @@ namespace do9Rename.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            SimpleIoc.Default.Register<IRemoveExtCommand>(() => new RemoveExtCommand());
-            SimpleIoc.Default.Register<IAppendExtCommand>(() => new AppendExtCommand());
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
@@ -24,10 +20,9 @@ namespace do9Rename.ViewModel
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
-        
+
         public static void Cleanup()
         {
-            // TODO Clear the ViewModels
         }
     }
 }

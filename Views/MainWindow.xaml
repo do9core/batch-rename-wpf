@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="批量重命名" Height="500" Width="850" 
+        Title="批量重命名" Height="500" Width="750" 
         DataContext="{Binding Path=Main, Source={StaticResource Locator}}">
     <Grid>
         <Grid.RowDefinitions>
@@ -39,79 +39,136 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <GroupBox Header="截取">
+            <GroupBox>
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ToolTip>
+                            <TextBlock>
+                                从指定位置i开始，保留n个字符，可从前方或后方开始
+                            </TextBlock>
+                        </StackPanel.ToolTip>
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">截取</TextBlock>
+                        <Image Source="../Assets/HelpIcon.png" Width="15" Height="15"/>
+                    </StackPanel>
+                </GroupBox.Header>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" 
                                 Margin="5"
+                                Grid.ColumnSpan="2"
                                 VerticalAlignment="Center">
                         <TextBlock Text="方向："/>
-                        <RadioButton GroupName="Direction"
+                        <RadioButton GroupName="SubStractDirection"
                                      Content="从前方开始"
                                      Margin="0,0,10,0"
                                      IsChecked="{Binding Path=SubHeadFirst,Mode=TwoWay}"/>
-                        <RadioButton GroupName="Direction"
+                        <RadioButton GroupName="SubStractDirection"
                              Content="从后方开始"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" 
-                                Grid.Row="1" 
-                                Margin="5"
-                                VerticalAlignment="Center">
-                        <TextBlock Text="从第" VerticalAlignment="Center"/>
-                        <TextBox MinWidth="20" Margin="2,0" 
-                                 Text="{Binding Path=SubSkip,UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock VerticalAlignment="Center" Text="位开始，保留"/>
-                        <TextBox MinWidth="20" Margin="2,0"
-                                 Text="{Binding Path=SubTake,UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Text="个字符" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <Button Grid.Row="2" 
+                    <TextBlock Text="从位置" VerticalAlignment="Center" Grid.Row="1"/>
+                    <TextBox MinWidth="20" Margin="5"
+                             Grid.Row="1" Grid.Column="1" Text="{Binding Path=SubSkip,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock VerticalAlignment="Center" Text="保留" Grid.Row="2"/>
+                    <TextBox MinWidth="20" Margin="5"
+                             Grid.Row="2" Grid.Column="1" Text="{Binding Path=SubTake,UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Grid.Row="3"
+                            Grid.ColumnSpan="2"
                             Command="{Binding Path=AddOperationCommand}"
                             CommandParameter="SUBSTRACT"
                             Margin="5"
                             Content="追加截取"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="插入" Grid.Column="1">
+            <GroupBox Grid.Column="1">
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ToolTip>
+                            <TextBlock>
+                                从指定位置开始，插入指定内容
+                            </TextBlock>
+                        </StackPanel.ToolTip>
+                        <TextBlock Margin="5,0">插入</TextBlock>
+                        <Image Source="../Assets/HelpIcon.png" Width="15" Height="15"/>
+                    </StackPanel>
+                </GroupBox.Header>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock VerticalAlignment="Center" Text="从第"/>
-                        <TextBox Margin="2" MinWidth="20" VerticalAlignment="Center"
-                                 Text="{Binding Path=AppendSkip,UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock VerticalAlignment="Center" Text="位开始，插入"/>
-                        <TextBox Margin="2" MinWidth="100" VerticalAlignment="Center"
-                                 Text="{Binding Path=AppendText,UpdateSourceTrigger=PropertyChanged}"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" 
+                                Margin="5"
+                                Grid.ColumnSpan="2"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="方向："/>
+                        <RadioButton GroupName="InsertDirection"
+                                     Content="从前方开始"
+                                     Margin="0,0,10,0"
+                                     IsChecked="{Binding Path=AppendHeadFirst,Mode=TwoWay}"/>
+                        <RadioButton GroupName="InsertDirection"
+                             Content="从后方开始"/>
                     </StackPanel>
-                    <Button Grid.Row="1" 
+                    <TextBlock VerticalAlignment="Center" Text="从位置" Grid.Row="1"/>
+                    <TextBox Margin="5" MinWidth="20" VerticalAlignment="Center" Grid.Row="1"
+                             Grid.Column="1" Text="{Binding Path=AppendSkip,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock VerticalAlignment="Center" Text="插入内容" Grid.Row="2"/>
+                    <TextBox Margin="5" MinWidth="100" VerticalAlignment="Center"
+                             Grid.Row="2" Grid.Column="1" Text="{Binding Path=AppendText,UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Grid.Row="3" 
+                            Grid.ColumnSpan="2"
                             Command="{Binding Path=AddOperationCommand}"
                             CommandParameter="APPEND"
                             Margin="5"
                             Content="追加插入"/>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="替换" Grid.Column="2">
+            <GroupBox Grid.Column="2">
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.ToolTip>
+                            <TextBlock>
+                                将指定内容替换为新内容，允许正则
+                            </TextBlock>
+                        </StackPanel.ToolTip>
+                        <TextBlock Margin="5,0">替换</TextBlock>
+                        <Image Source="../Assets/HelpIcon.png" Width="15" Height="15"/>
+                    </StackPanel>
+                </GroupBox.Header>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock VerticalAlignment="Center" Text="替换内容"/>
-                        <TextBox Margin="2" MinWidth="75" VerticalAlignment="Center"
-                                 Text="{Binding Path=ReplaceOld}"/>
-                        <TextBlock VerticalAlignment="Center" Text="替换为"/>
-                        <TextBox Margin="2" MinWidth="75" VerticalAlignment="Center"
-                                 Text="{Binding Path=ReplaceNew}"/>
-                    </StackPanel>
-                    <Button Grid.Row="1" 
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Margin="5" Grid.ColumnSpan="2" IsChecked="{Binding Path=IsUsingRegex}">正则模式</CheckBox>
+                    <TextBlock VerticalAlignment="Center" Text="替换内容" Grid.Row="1"/>
+                    <TextBox Margin="5" MinWidth="75" VerticalAlignment="Center"
+                             Grid.Column="1" Grid.Row="1" Text="{Binding Path=ReplaceOld}"/>
+                    <TextBlock VerticalAlignment="Center" Text="替换为" Grid.Row="2"/>
+                    <TextBox Margin="5" MinWidth="75" VerticalAlignment="Center"
+                             Grid.Row="2" Grid.Column="1" Text="{Binding Path=ReplaceNew}"/>
+                    <Button Grid.Row="3" 
+                            Grid.ColumnSpan="2"
                             Command="{Binding Path=AddOperationCommand}"
                             CommandParameter="REPLACE"
                             Margin="5"
