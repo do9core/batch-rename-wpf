@@ -14,8 +14,7 @@ This is a rename tool for windows users
 
 you can rename a lot of files in one time  
 
-It supports undo,  
-but cannot redo because of some bugs.
+It supports undo and redo.
 
 ***
 
